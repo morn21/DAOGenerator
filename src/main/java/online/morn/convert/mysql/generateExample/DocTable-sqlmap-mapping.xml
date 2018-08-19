@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="GB2312" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="iwallet">
+
+	<!-- result maps for database table doc_table -->
+	<resultMap id="RM-DOC-TABLE" class="online.morn.convert.mysql.generateExample.DocTableDO">
+		<result property="id" column="id" javaType="java.lang.Integer" jdbcType="INT" /><!-- ID -->
+		<result property="createTime" column="create_time" javaType="java.util.Date" jdbcType="DATETIME" /><!-- 创建时间 -->
+		<result property="updateTime" column="update_time" javaType="java.util.Date" jdbcType="DATETIME" /><!-- 修改时间 -->
+		<result property="docTitle" column="doc_title" javaType="java.lang.String" jdbcType="VARCHAR" /><!-- 标题 -->
+		<result property="docContent" column="doc_content" javaType="java.lang.String" jdbcType="VARCHAR" /><!-- 内容 -->
+	</resultMap>
+
+	<!-- mapped statement for IbatisDocTableDAO.insert -->
+	<insert id="MS-DOC-TABLE-INSERT">
+		insert /*MS-DOC-TABLE-INSERT*/ into doc_table
+		(id,create_time,update_time,doc_title,doc_content)
+		values
+		(#id#,#createTime#,#updateTime#,#docTitle#,#docContent#)
+		<selectKey resultClass="long" keyProperty="id">SELECT LAST_INSERT_ID() AS ID</selectKey>
+		<selectKey resultClass="long" keyProperty="id">
+		select last_insert_id() as id
+		</selectKey>
+	</insert>
+
+	<!-- mapped statement for IbatisDocTableDAO.deleteById -->
+	<delete id="MS-DOC-TABLE-DELETE-BY-ID" >
+		delete /*MS-DOC-TABLE-DELETE-BY-ID*/
+		from doc_table
+		where id = #id#
+	</delete>
+
+	<!-- mapped statement for IbatisDocTableDAO.updateById -->
+	<update id="MS-DOC-TABLE-UPDATE-BY-ID">
+		update /*MS-DOC-TABLE-UPDATE-BY-ID*/ doc_table
+		set gmt_modified = CURRENT_TIMESTAMP
+		<dynamic>
+			<isNotEmpty prepend="," property="id">
+				id = #id#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="createTime">
+				create_time = #createTime#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="updateTime">
+				update_time = #updateTime#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="docTitle">
+				doc_title = #docTitle#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="docContent">
+				doc_content = #docContent#
+			</isNotEmpty>
+		</dynamic>
+		where id = #id#
+	</update>
+
+	<!-- mapped statement for IbatisDocTableDAO.selectByCondition -->
+	<select id="MS-DOC-TABLE-SELECT-BY-CONDITION" resultMap="RM-DOC-TABLE">
+		select /*MS-DOC-TABLE-SELECT-BY-CONDITION*/
+			id,create_time,update_time,doc_title,doc_content
+		from doc_table
+		<dynamic prepend="where">
+			<isNotEmpty prepend="AND" property="id">
+				id = #id#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="createTime">
+				create_time = #createTime#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="updateTime">
+				update_time = #updateTime#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="docTitle">
+				doc_title = #docTitle#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="docContent">
+				doc_content = #docContent#
+			</isNotEmpty>
+		</dynamic>
+		order by id desc
+		<dynamic>
+			<isNotEmpty property="currentPage">
+				limit #start#,#pageSize#
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<!-- mapped statement for IbatisDocTableDAO.selectCountByCondition -->
+	<select id="MS-DOC-TABLE-SELECT-COUNT-BY-CONDITION" resultClass="int">
+		select /*MS-DOC-TABLE-SELECT-COUNT-BY-CONDITION*/
+			count(1)
+		from doc_table
+		<dynamic prepend="where">
+			<isNotEmpty prepend="AND" property="id">
+				id = #id#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="createTime">
+				create_time = #createTime#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="updateTime">
+				update_time = #updateTime#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="docTitle">
+				doc_title = #docTitle#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="docContent">
+				doc_content = #docContent#
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+</sqlMap>
