@@ -19,15 +19,14 @@ public class MainService2 {
     /**作者*/
     private final String author = "HornerJ";
     /**DO包路径*/
-    private final String doPackagePath = "online.morn.convert.mysql.generateExample";
+    private final String doPackagePath = "online.morn.timingTasks.dao.DO";
     /**QueryObj包路径*/
-    private final String queryObjPackagePath = "online.morn.convert.mysql.generateExample";
+    private final String queryObjPackagePath = "online.morn.timingTasks.dao.queryObj";
     /**DAO包路径*/
-    private final String daoInterfacePackagePath = "online.morn.convert.mysql.generateExample";
-    /**DAO实现包路径*/
-    private final String daoImplPackagePath = "online.morn.convert.mysql.generateExample";
+    private final String daoInterfacePackagePath = "online.morn.timingTasks.dao.mapper";
+
     /**时间字段名列表*/
-    private final List<String> timeFieldNameList = Arrays.asList(new String[]{"createTime","updateTime"});
+    private final List<String> timeFieldNameList = Arrays.asList(new String[]{"create_time","modify_time"});
 
     /**表格对象*/
     private TableObject tableObject;
@@ -86,24 +85,6 @@ public class MainService2 {
     }
 
     /**
-     * 获得其它配置信息
-     * @return
-     */
-    public String getOtherConfigInfo(){
-        String xmlName = this.tableObject.getJavaClassName() + "-sqlmap-mapping.xml";
-        String javaClassName =  this.tableObject.getJavaClassName();
-        String javaClassNameLower = PublicUtil.lowerCaseFirst(javaClassName);
-        String daoImplName = "Ibatis" + javaClassName + "DAO";
-
-        StringBuffer returnBuffer = new StringBuffer();
-        returnBuffer.append("<sqlMap resource=\"sqlmap/auto/" + xmlName + "\"/>");
-        returnBuffer.append("<!-- " + this.nowTimeStr + " -->\n");
-        returnBuffer.append("<bean id=\"" + javaClassNameLower + "DAO\" class=\"" + this.daoImplPackagePath + "." + daoImplName + "\" parent=\"baseSqlMapClientDAO\"/>");
-        returnBuffer.append("<!-- " + this.nowTimeStr + " -->\n");
-        return returnBuffer.toString();
-    }
-
-    /**
      * 【私有】获得类注释
      * @return
      */
@@ -130,6 +111,7 @@ public class MainService2 {
             strBuffer.append("\t/**" + columnInfoVO.getRemarks() + "*/\n");
             strBuffer.append("\tprivate " + columnInfoVO.getSimpleJavaType() + " " + columnInfoVO.getJavaFieldName() + ";\n");
         }
+        strBuffer.append("\n\t//Getter & Setter\n");
         strBuffer.append("}");
         PublicUtil.writeFile(this.filePath + doName + ".java",strBuffer.toString());
     }
@@ -159,6 +141,7 @@ public class MainService2 {
         strBuffer.append("\t\tint start = (currentPage - 1) * pageSize;\n");
         strBuffer.append("\t\treturn start;\n");
         strBuffer.append("\t}\n\n");
+        strBuffer.append("\t//Getter & Setter\n");
         strBuffer.append("}");
         PublicUtil.writeFile(this.filePath + queryObjName + ".java",strBuffer.toString());
     }
@@ -169,7 +152,7 @@ public class MainService2 {
     public void generateDAOInterface(){
         String javaClassName =  this.tableObject.getJavaClassName();
         String javaClassNameLower = PublicUtil.lowerCaseFirst(javaClassName);
-        String daoInterfaceName = javaClassName + "DAO";
+        String daoInterfaceName = javaClassName + "Mapper";
         String atAuthor = "@author " + this.author + " " + this.nowTimeStr;
 
         StringBuffer strBuffer = new StringBuffer();
@@ -182,128 +165,51 @@ public class MainService2 {
         strBuffer.append("\t * " + atAuthor + "\n");
         strBuffer.append("\t * @param " + javaClassNameLower + "\n");
         strBuffer.append("\t * @return\n");
-        strBuffer.append("\t * @throws Exception\n");
         strBuffer.append("\t */\n");
-        strBuffer.append("\tpublic long insert(" + javaClassName + "DO " + javaClassNameLower + ") throws Exception;\n\n");
+        strBuffer.append("\tInteger insert(" + javaClassName + "DO " + javaClassNameLower + ");\n\n");
 
         strBuffer.append("\t/**\n");
         strBuffer.append("\t * 根据ID删除\n");
         strBuffer.append("\t * " + atAuthor + "\n");
         strBuffer.append("\t * @param id\n");
         strBuffer.append("\t * @return\n");
-        strBuffer.append("\t * @throws Exception\n");
         strBuffer.append("\t */\n");
-        strBuffer.append("\tpublic long deleteById(Long id) throws Exception;\n\n");
+        strBuffer.append("\tInteger deleteById(Long id);\n\n");
 
         strBuffer.append("\t/**\n");
         strBuffer.append("\t * 根据ID修改\n");
         strBuffer.append("\t * " + atAuthor + "\n");
         strBuffer.append("\t * @param " + javaClassNameLower + "\n");
         strBuffer.append("\t * @return\n");
-        strBuffer.append("\t * @throws Exception\n");
         strBuffer.append("\t */\n");
-        strBuffer.append("\tpublic int updateById(" + javaClassName + "DO " + javaClassNameLower + ") throws Exception;\n\n");
+        strBuffer.append("\tInteger updateById(" + javaClassName + "DO " + javaClassNameLower + ") ;\n\n");
 
         strBuffer.append("\t/**\n");
         strBuffer.append("\t * 根据条件查询\n");
         strBuffer.append("\t * " + atAuthor + "\n");
         strBuffer.append("\t * @param queryObj\n");
         strBuffer.append("\t * @return\n");
-        strBuffer.append("\t * @throws Exception\n");
         strBuffer.append("\t */\n");
-        strBuffer.append("\tpublic List<" + javaClassName + "DO> selectByCondition(" + javaClassName + "QueryObj queryObj) throws Exception;\n\n");
+        strBuffer.append("\tList<" + javaClassName + "DO> selectByQueryObj(" + javaClassName + "QueryObj queryObj);\n\n");
 
         strBuffer.append("\t/**\n");
         strBuffer.append("\t * 根据条件查数量\n");
         strBuffer.append("\t * " + atAuthor + "\n");
         strBuffer.append("\t * @param queryObj\n");
         strBuffer.append("\t * @return\n");
-        strBuffer.append("\t * @throws Exception\n");
         strBuffer.append("\t */\n");
-        strBuffer.append("\tpublic Integer selectCountByCondition(" + javaClassName + "QueryObj queryObj) throws Exception;\n\n");
+        strBuffer.append("\tInteger selectCountByQueryObj(" + javaClassName + "QueryObj queryObj);\n\n");
 
         strBuffer.append("\t/**\n");
         strBuffer.append("\t * 根据ID查单条\n");
         strBuffer.append("\t * " + atAuthor + "\n");
         strBuffer.append("\t * @param id\n");
         strBuffer.append("\t * @return\n");
-        strBuffer.append("\t * @throws Exception\n");
         strBuffer.append("\t */\n");
-        strBuffer.append("\tpublic " + javaClassName + "DO selectById(Long id) throws Exception;\n\n");
+        strBuffer.append("\t" + javaClassName + "DO selectById(Long id);\n\n");
 
         strBuffer.append("}");
         PublicUtil.writeFile(this.filePath + daoInterfaceName + ".java",strBuffer.toString());
-    }
-
-    /**
-     * 生成DAO接口实现
-     */
-    public void generateDAOInterfaceImpl(){
-        String upperCaseTableName = this.tableObject.getTableName().toUpperCase().replaceAll("_","-");
-        String javaClassName =  this.tableObject.getJavaClassName();
-        String javaClassNameLower = PublicUtil.lowerCaseFirst(javaClassName);
-        String daoImplName = "Ibatis" + javaClassName + "DAO";
-
-        StringBuffer strBuffer = new StringBuffer();
-        strBuffer.append("package " + this.daoImplPackagePath + ";\n\n");
-        strBuffer.append(this.getClassAnnotation());
-        strBuffer.append("public class " + daoImplName + " extends SqlMapClientDaoSupport implements " + javaClassName + "DAO {\n\n");
-
-        strBuffer.append("\t@Override\n");
-        strBuffer.append("\tpublic long insert(" + javaClassName + "DO " + javaClassNameLower + ") throws Exception {\n");
-        strBuffer.append("\t\tif (" + javaClassNameLower + " == null) {\n");
-        strBuffer.append("\t\t\tthrow new IllegalArgumentException(\"Can't insert a null data object into db.\");\n");
-        strBuffer.append("\t\t}\n");
-        strBuffer.append("\t\tgetSqlMapClientTemplate().insert(\"MS-" + upperCaseTableName + "-INSERT\", " + javaClassNameLower + ");\n");
-        strBuffer.append("\t\treturn " + javaClassNameLower + ".getId();\n");
-        strBuffer.append("\t}\n\n");
-
-        strBuffer.append("\t@Override\n");
-        strBuffer.append("\tpublic long deleteById(Long id) throws Exception {\n");
-        strBuffer.append("\t\tMap param = new HashMap();\n");
-        strBuffer.append("\t\tparam.put(\"id\", id);\n");
-        strBuffer.append("\t\treturn getSqlMapClientTemplate().delete(\"MS-" + upperCaseTableName + "-DELETE-BY-ID\", param);\n");
-        strBuffer.append("\t}\n\n");
-
-        strBuffer.append("\t@Override\n");
-        strBuffer.append("\tpublic int updateById(" + javaClassName + "DO " + javaClassNameLower + "Log) throws Exception {\n");
-        strBuffer.append("\t\tif (" + javaClassNameLower + "Log == null) {\n");
-        strBuffer.append("\t\t\tthrow new IllegalArgumentException(\"Can't update by a null data object.\");\n");
-        strBuffer.append("\t\t}\n");
-        strBuffer.append("\t\treturn getSqlMapClientTemplate().update(\"MS-" + upperCaseTableName + "-UPDATE-BY-ID\", " + javaClassNameLower + "Log);\n");
-        strBuffer.append("\t}\n\n");
-
-        strBuffer.append("\t@Override\n");
-        strBuffer.append("\tpublic List<" + javaClassName + "DO> selectByCondition(" + javaClassName + "QueryObj queryObj) throws Exception {\n");
-        strBuffer.append("\t\tif (queryObj == null) {\n");
-        strBuffer.append("\t\t\tthrow new IllegalArgumentException(\"Can't select a null data object.\");\n");
-        strBuffer.append("\t\t}\n");
-        strBuffer.append("\t\treturn getSqlMapClientTemplate().queryForList(\"MS-" + upperCaseTableName + "-SELECT-BY-CONDITION\", queryObj);\n");
-        strBuffer.append("\t}\n\n");
-
-        strBuffer.append("\t@Override\n");
-        strBuffer.append("\tpublic Integer selectCountByCondition(" + javaClassName + "QueryObj queryObj) throws Exception {\n");
-        strBuffer.append("\t\tInteger retObj = (Integer) getSqlMapClientTemplate().queryForObject(\"MS-" + upperCaseTableName + "-SELECT-COUNT-BY-CONDITION\", queryObj);\n");
-        strBuffer.append("\t\tif (retObj == null) {\n");
-        strBuffer.append("\t\t\treturn 0;\n");
-        strBuffer.append("\t\t} else {\n");
-        strBuffer.append("\t\t\treturn retObj.intValue();\n");
-        strBuffer.append("\t\t}\n");
-        strBuffer.append("\t}\n\n");
-
-        strBuffer.append("\t@Override\n");
-        strBuffer.append("\tpublic " + javaClassName + "DO selectById(Long id) throws Exception {\n");
-        strBuffer.append("\t\t" + javaClassName + "QueryObj queryObj = new " + javaClassName + "QueryObj();\n");
-        strBuffer.append("\t\tqueryObj.setId(id);\n");
-        strBuffer.append("\t\tList<" + javaClassName + "DO> list = this.selectByCondition(queryObj);\n");
-        strBuffer.append("\t\tif(!CollectionUtils.isEmpty(list)){\n");
-        strBuffer.append("\t\t\treturn list.get(0);\n");
-        strBuffer.append("\t\t}\n");
-        strBuffer.append("\t\treturn null;\n");
-        strBuffer.append("\t}\n\n");
-
-        strBuffer.append("}");
-        PublicUtil.writeFile(this.filePath + daoImplName + ".java",strBuffer.toString());
     }
 
     /**
@@ -312,22 +218,24 @@ public class MainService2 {
     public void generateMyBatisXml(){
         String upperCaseTableName = this.tableObject.getTableName().toUpperCase().replaceAll("_","-");
         String doPath = this.doPackagePath + "." + this.tableObject.getJavaClassName() + "DO";
-        String daoImplName = "Ibatis" + this.tableObject.getJavaClassName() + "DAO";
+        String mapperPath = this.daoInterfacePackagePath + "." + this.tableObject.getJavaClassName() + "Mapper";
+        //String daoImplName = "Ibatis" + this.tableObject.getJavaClassName() + "DAO";
 
         StringBuffer strBuffer = new StringBuffer();
-        strBuffer.append("<?xml version=\"1.0\" encoding=\"GB2312\" ?>\n");
-        strBuffer.append("<!DOCTYPE sqlMap PUBLIC \"-//iBATIS.com//DTD SQL Map 2.0//EN\" \"http://www.ibatis.com/dtd/sql-map-2.dtd\">\n\n");
+        strBuffer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+        strBuffer.append("<!DOCTYPE mapper PUBLIC \"-//mybatis.org//DTD Mapper 3.0//EN\" \"http://mybatis.org/dtd/mybatis-3-mapper.dtd\">\n\n");
 
         //SQLMap
-        strBuffer.append("<sqlMap namespace=\"iwallet\">\n\n");
-        strBuffer.append("\t<!-- result maps for database table " + this.tableObject.getTableName() + " -->\n");
-        strBuffer.append("\t<resultMap id=\"RM-" + upperCaseTableName + "\" class=\"" + doPath + "\">\n");
+        strBuffer.append("<mapper namespace=\"" + mapperPath + "\">\n\n");
+
+        strBuffer.append("\t<!--resultMap-->\n");
+        strBuffer.append("\t<resultMap id=\"RESULT-MAP\" type=\"" + doPath + "\">\n");
         for(ColumnInfoVO columnInfoVO : this.tableObject.getColumnInfoVOList()){
-            strBuffer.append("\t\t<result "
-                + "property=\"" + columnInfoVO.getJavaFieldName() +"\" "
-                + "column=\"" + columnInfoVO.getColumnName() + "\" "
-                + "javaType=\"" + columnInfoVO.getJavaType() + "\" "
-                + "jdbcType=\"" + columnInfoVO.getColumnType() + "\" />");
+            if("id".equalsIgnoreCase(columnInfoVO.getJavaFieldName())) {
+                strBuffer.append("\t\t<id property=\"" + columnInfoVO.getJavaFieldName() + "\" column=\"" + columnInfoVO.getColumnName() + "\"/>\n");
+            } else {
+                strBuffer.append("\t\t<result property=\"" + columnInfoVO.getJavaFieldName() + "\" column=\"" + columnInfoVO.getColumnName() + "\"/>\n");
+            }
             strBuffer.append("<!-- " + columnInfoVO.getRemarks() +" -->\n");
         }
         strBuffer.append("\t</resultMap>\n\n");
@@ -338,89 +246,82 @@ public class MainService2 {
         for(ColumnInfoVO columnInfoVO : this.tableObject.getColumnInfoVOList()){
             columnList.add(columnInfoVO.getColumnName());
             if(this.timeFieldNameList.contains(columnInfoVO.getColumnName())){
-                valuesList.add("CURRENT_TIMESTAMP");
+                valuesList.add("now()");
             } else {
-                valuesList.add("#" + columnInfoVO.getJavaFieldName() + "#");
+                valuesList.add("#{" + columnInfoVO.getJavaFieldName() + "}");
             }
         }
-        strBuffer.append("\t<!-- mapped statement for " + daoImplName + ".insert -->\n");
-        strBuffer.append("\t<insert id=\"MS-" + upperCaseTableName + "-INSERT\">\n");
-        strBuffer.append("\t\tinsert /*MS-" + upperCaseTableName + "-INSERT*/ into " + this.tableObject.getTableName() + "\n");
+        strBuffer.append("\t<!--insert-->\n");
+        strBuffer.append("\t<insert id=\"insert\" useGeneratedKeys=\"true\" keyProperty=\"id\">\n");
+        strBuffer.append("\t\tinsert into " + this.tableObject.getTableName() + "\n");
         strBuffer.append("\t\t(" + Joiner.on(",").join(columnList) + ")\n");
         strBuffer.append("\t\tvalues\n");
         strBuffer.append("\t\t(" + Joiner.on(",").join(valuesList) + ")\n");
-        strBuffer.append("\t\t<selectKey resultClass=\"long\" keyProperty=\"id\">SELECT LAST_INSERT_ID() AS ID</selectKey>\n");
-        strBuffer.append("\t\t<selectKey resultClass=\"long\" keyProperty=\"id\">\n");
-        strBuffer.append("\t\tselect last_insert_id() as id\n");
-        strBuffer.append("\t\t</selectKey>\n");
         strBuffer.append("\t</insert>\n\n");
 
         //deleteById
-        strBuffer.append("\t<!-- mapped statement for " + daoImplName + ".deleteById -->\n");
-        strBuffer.append("\t<delete id=\"MS-" + upperCaseTableName + "-DELETE-BY-ID\" >\n");
-        strBuffer.append("\t\tdelete /*MS-" + upperCaseTableName + "-DELETE-BY-ID*/\n");
-        strBuffer.append("\t\tfrom " + this.tableObject.getTableName() + "\n");
-        strBuffer.append("\t\twhere id = #id#\n");
+        strBuffer.append("\t<!--deleteById-->\n");
+        strBuffer.append("\t<delete id=\"deleteById\">\n");
+        strBuffer.append("\t\tdelete from " + this.tableObject.getTableName() + "where id = #{id}\n");
         strBuffer.append("\t</delete>\n\n");
 
         //updateById
-        strBuffer.append("\t<!-- mapped statement for " + daoImplName + ".updateById -->\n");
-        strBuffer.append("\t<update id=\"MS-" + upperCaseTableName + "-UPDATE-BY-ID\">\n");
-        strBuffer.append("\t\tupdate /*MS-" + upperCaseTableName + "-UPDATE-BY-ID*/ " + this.tableObject.getTableName() + "\n");
-        strBuffer.append("\t\tset gmt_modified = CURRENT_TIMESTAMP\n");
-        strBuffer.append("\t\t<dynamic>\n");
+        strBuffer.append("\t<!--updateById-->\n");
+        strBuffer.append("\t<update id=\"updateById\">\n");
+        strBuffer.append("\t\tupdate " + this.tableObject.getTableName() + "\n");
+        strBuffer.append("\t\t<set>\n");
+        strBuffer.append("\t\t\t<if test=\"true\">modify_time = now(),</if>\n");
         for(ColumnInfoVO columnInfoVO : this.tableObject.getColumnInfoVOList()){
             if(this.timeFieldNameList.contains(columnInfoVO.getColumnName())){
                 continue;
             }
-            strBuffer.append("\t\t\t<isNotEmpty prepend=\",\" property=\"" + columnInfoVO.getJavaFieldName() + "\">\n");
-            strBuffer.append("\t\t\t\t" + columnInfoVO.getColumnName() + " = #" + columnInfoVO.getJavaFieldName() + "#\n");
-            strBuffer.append("\t\t\t</isNotEmpty>\n");
+            strBuffer.append("\t\t\t<if test=\"" + columnInfoVO.getJavaFieldName() + " != null\">" +
+                    columnInfoVO.getColumnName() + " = #{" + columnInfoVO.getJavaFieldName() + "},</if>\n");
         }
-        strBuffer.append("\t\t</dynamic>\n");
-        strBuffer.append("\t\twhere id = #id#\n");
+        strBuffer.append("\t\t</set>\n");
+        strBuffer.append("\t\twhere id = #{id}\n");
         strBuffer.append("\t</update>\n\n");
 
-        //selectByCondition
-        strBuffer.append("\t<!-- mapped statement for " + daoImplName + ".selectByCondition -->\n");
-        strBuffer.append("\t<select id=\"MS-" + upperCaseTableName + "-SELECT-BY-CONDITION\" resultMap=\"RM-" + upperCaseTableName + "\">\n");
-        strBuffer.append("\t\tselect /*MS-" + upperCaseTableName + "-SELECT-BY-CONDITION*/\n");
-        strBuffer.append("\t\t\t" + Joiner.on(",").join(columnList) + "\n");
+        //selectByQueryObj
+        strBuffer.append("\t<!--selectByQueryObj-->\n");
+        strBuffer.append("\t<select id=\"selectByQueryObj\" resultMap=\"RESULT-MAP\">\n");
+        strBuffer.append("\t\tselect " + Joiner.on(",").join(columnList) + "\n");
         strBuffer.append("\t\tfrom " + this.tableObject.getTableName() + "\n");
-        strBuffer.append("\t\t<dynamic prepend=\"where\">\n");
+        strBuffer.append("\t\t<where>\n");
         for(ColumnInfoVO columnInfoVO : this.tableObject.getColumnInfoVOList()){
             if(this.timeFieldNameList.contains(columnInfoVO.getColumnName())){
                 continue;
             }
-            strBuffer.append("\t\t\t" + "<isNotEmpty prepend=\"AND\" property=\"" + columnInfoVO.getJavaFieldName() + "\">\n");
-            strBuffer.append("\t\t\t\t" + columnInfoVO.getColumnName() + " = #" + columnInfoVO.getJavaFieldName() + "#\n");
-            strBuffer.append("\t\t\t</isNotEmpty>\n");
+            strBuffer.append("\t\t\t<if test=\"" + columnInfoVO.getJavaFieldName() + " != null\">" +
+                    "and " + columnInfoVO.getColumnName() + " = #{" + columnInfoVO.getJavaFieldName()  + "}</if>\n");
         }
-        strBuffer.append("\t\t</dynamic>\n");
+        strBuffer.append("\t\t</where>\n");
         strBuffer.append("\t\torder by id desc\n");
-        strBuffer.append("\t\t<dynamic>\n");
-        strBuffer.append("\t\t\t<isNotEmpty property=\"currentPage\">\n");
-        strBuffer.append("\t\t\t\tlimit #start#,#pageSize#\n");
-        strBuffer.append("\t\t\t</isNotEmpty>\n");
-        strBuffer.append("\t\t</dynamic>\n");
+        strBuffer.append("\t\t<if test=\"currentPage != null\">limit #{start},#{pageSize}</if>\n");
         strBuffer.append("\t</select>\n\n");
 
-        //selectCountByCondition
-        strBuffer.append("\t<!-- mapped statement for " + daoImplName + ".selectCountByCondition -->\n");
-        strBuffer.append("\t<select id=\"MS-" + upperCaseTableName + "-SELECT-COUNT-BY-CONDITION\" resultClass=\"int\">\n");
-        strBuffer.append("\t\tselect /*MS-" + upperCaseTableName + "-SELECT-COUNT-BY-CONDITION*/\n");
-        strBuffer.append("\t\t\tcount(1)\n");
+        //selectCountByQueryObj
+        strBuffer.append("\t<!--selectCountByQueryObj-->\n");
+        strBuffer.append("\t<select id=\"selectCountByQueryObj\" resultType=\"int\">\n");
+        strBuffer.append("\t\tselect count(1)\n");
         strBuffer.append("\t\tfrom " + this.tableObject.getTableName() + "\n");
-        strBuffer.append("\t\t<dynamic prepend=\"where\">\n");
+        strBuffer.append("\t\t<where>\n");
         for(ColumnInfoVO columnInfoVO : this.tableObject.getColumnInfoVOList()){
             if(this.timeFieldNameList.contains(columnInfoVO.getColumnName())){
                 continue;
             }
-            strBuffer.append("\t\t\t<isNotEmpty prepend=\"AND\" property=\"" + columnInfoVO.getJavaFieldName() + "\">\n");
-            strBuffer.append("\t\t\t\t" + columnInfoVO.getColumnName() + " = #" + columnInfoVO.getJavaFieldName() + "#\n");
-            strBuffer.append("\t\t\t</isNotEmpty>\n");
+            strBuffer.append("\t\t\t<if test=\"" + columnInfoVO.getJavaFieldName() + " != null\">" +
+                    "and " + columnInfoVO.getColumnName() + " = #{" + columnInfoVO.getJavaFieldName()  + "}</if>\n");
         }
-        strBuffer.append("\t\t</dynamic>\n");
+        strBuffer.append("\t\t</where>\n");
+        strBuffer.append("\t</select>\n\n");
+
+        //selectById
+        strBuffer.append("\t<!--selectById-->\n");
+        strBuffer.append("\t<select id=\"selectById\" resultMap=\"RESULT-MAP\">\n");
+        strBuffer.append("\t\tselect " + Joiner.on(",").join(columnList) + "\n");
+        strBuffer.append("\t\tfrom " + this.tableObject.getTableName() + "\n");
+        strBuffer.append("\t\twhere id=#{id}\n");
         strBuffer.append("\t</select>\n\n");
 
         strBuffer.append("</sqlMap>");
@@ -435,9 +336,6 @@ public class MainService2 {
         //获得表markdown结构
         PublicUtil.println(mainService.getMarkdown());
         PublicUtil.println("----------------------------------------");
-        //获得其它配置信息
-        PublicUtil.println(mainService.getOtherConfigInfo());
-        PublicUtil.println("----------------------------------------");
         //生成DO模型
         mainService.generateDOModel();
 
@@ -446,9 +344,6 @@ public class MainService2 {
 
         //生成DAO接口
         mainService.generateDAOInterface();
-
-        //生成DAO接口实现
-        mainService.generateDAOInterfaceImpl();
 
         //生成MyBatisXml
         mainService.generateMyBatisXml();

@@ -392,7 +392,7 @@ public class MainService {
             if(this.timeFieldNameList.contains(columnInfoVO.getColumnName())){
                 continue;
             }
-            strBuffer.append("\t\t\t" + "<isNotEmpty prepend=\"AND\" property=\"" + columnInfoVO.getJavaFieldName() + "\">\n");
+            strBuffer.append("\t\t\t<isNotEmpty prepend=\"AND\" property=\"" + columnInfoVO.getJavaFieldName() + "\">\n");
             strBuffer.append("\t\t\t\t" + columnInfoVO.getColumnName() + " = #" + columnInfoVO.getJavaFieldName() + "#\n");
             strBuffer.append("\t\t\t</isNotEmpty>\n");
         }

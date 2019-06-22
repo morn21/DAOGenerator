@@ -9,7 +9,7 @@ import java.sql.Statement;
 public class DBManager {
 
     private static String driver = "com.mysql.jdbc.Driver";
-    private static String url = "jdbc:mysql://127.0.0.1:3306/dao_generator?useUnicode=true&amp;characterEncoding=utf-8";
+    private static String url = "jdbc:mysql://127.0.0.1:3306/timing_tasks?useUnicode=true&amp;characterEncoding=utf-8";
     private static String user = "root";
     private static String password = "root";
 
