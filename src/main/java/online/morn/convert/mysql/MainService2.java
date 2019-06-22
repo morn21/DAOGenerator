@@ -215,7 +215,7 @@ public class MainService2 {
      * 生成MyBatisXml
      */
     public void generateMyBatisXml(){
-        String upperCaseTableName = this.tableObject.getTableName().toUpperCase().replaceAll("_","-");
+        //String upperCaseTableName = this.tableObject.getTableName().toUpperCase().replaceAll("_","-");
         String doPath = this.doPackagePath + "." + this.tableObject.getJavaClassName() + "DO";
         String mapperPath = this.daoInterfacePackagePath + "." + this.tableObject.getJavaClassName() + "Mapper";
         //String daoImplName = "Ibatis" + this.tableObject.getJavaClassName() + "DAO";
@@ -325,7 +325,7 @@ public class MainService2 {
 
         strBuffer.append("</mapper>");
 
-        PublicUtil.writeFile(this.filePath + this.tableObject.getJavaClassName() + "-sqlmap-mapping.xml",strBuffer.toString());
+        PublicUtil.writeFile(this.filePath + this.tableObject.getJavaClassName() + "Mapper.xml",strBuffer.toString());
     }
 
     public static void main(String[] args){
