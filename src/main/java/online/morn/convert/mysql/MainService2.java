@@ -106,7 +106,6 @@ public class MainService2 {
         strBuffer.append("package " + this.doPackagePath + ";\n\n");
         strBuffer.append(this.getClassAnnotation());
         strBuffer.append("public class " + doName + " {\n");
-        strBuffer.append("\tprivate static final long serialVersionUID = 741231858441822688L;\n\n");
         for(ColumnInfoVO columnInfoVO : this.tableObject.getColumnInfoVOList()){
             strBuffer.append("\t/**" + columnInfoVO.getRemarks() + "*/\n");
             strBuffer.append("\tprivate " + columnInfoVO.getSimpleJavaType() + " " + columnInfoVO.getJavaFieldName() + ";\n");
@@ -163,10 +162,10 @@ public class MainService2 {
         strBuffer.append("\t/**\n");
         strBuffer.append("\t * 添加\n");
         strBuffer.append("\t * " + atAuthor + "\n");
-        strBuffer.append("\t * @param " + javaClassNameLower + "\n");
+        strBuffer.append("\t * @param " + javaClassNameLower + "DO\n");
         strBuffer.append("\t * @return\n");
         strBuffer.append("\t */\n");
-        strBuffer.append("\tInteger insert(" + javaClassName + "DO " + javaClassNameLower + ");\n\n");
+        strBuffer.append("\tInteger insert(" + javaClassName + "DO " + javaClassNameLower + "DO);\n\n");
 
         strBuffer.append("\t/**\n");
         strBuffer.append("\t * 根据ID删除\n");
@@ -179,13 +178,13 @@ public class MainService2 {
         strBuffer.append("\t/**\n");
         strBuffer.append("\t * 根据ID修改\n");
         strBuffer.append("\t * " + atAuthor + "\n");
-        strBuffer.append("\t * @param " + javaClassNameLower + "\n");
+        strBuffer.append("\t * @param " + javaClassNameLower + "DO\n");
         strBuffer.append("\t * @return\n");
         strBuffer.append("\t */\n");
-        strBuffer.append("\tInteger updateById(" + javaClassName + "DO " + javaClassNameLower + ") ;\n\n");
+        strBuffer.append("\tInteger updateById(" + javaClassName + "DO " + javaClassNameLower + "DO);\n\n");
 
         strBuffer.append("\t/**\n");
-        strBuffer.append("\t * 根据条件查询\n");
+        strBuffer.append("\t * 根据queryObj查询\n");
         strBuffer.append("\t * " + atAuthor + "\n");
         strBuffer.append("\t * @param queryObj\n");
         strBuffer.append("\t * @return\n");
@@ -193,7 +192,7 @@ public class MainService2 {
         strBuffer.append("\tList<" + javaClassName + "DO> selectByQueryObj(" + javaClassName + "QueryObj queryObj);\n\n");
 
         strBuffer.append("\t/**\n");
-        strBuffer.append("\t * 根据条件查数量\n");
+        strBuffer.append("\t * 根据queryObj查询数量\n");
         strBuffer.append("\t * " + atAuthor + "\n");
         strBuffer.append("\t * @param queryObj\n");
         strBuffer.append("\t * @return\n");
@@ -232,11 +231,11 @@ public class MainService2 {
         strBuffer.append("\t<resultMap id=\"RESULT-MAP\" type=\"" + doPath + "\">\n");
         for(ColumnInfoVO columnInfoVO : this.tableObject.getColumnInfoVOList()){
             if("id".equalsIgnoreCase(columnInfoVO.getJavaFieldName())) {
-                strBuffer.append("\t\t<id property=\"" + columnInfoVO.getJavaFieldName() + "\" column=\"" + columnInfoVO.getColumnName() + "\"/>\n");
+                strBuffer.append("\t\t<id property=\"" + columnInfoVO.getJavaFieldName() + "\" column=\"" + columnInfoVO.getColumnName() + "\"/>");
             } else {
-                strBuffer.append("\t\t<result property=\"" + columnInfoVO.getJavaFieldName() + "\" column=\"" + columnInfoVO.getColumnName() + "\"/>\n");
+                strBuffer.append("\t\t<result property=\"" + columnInfoVO.getJavaFieldName() + "\" column=\"" + columnInfoVO.getColumnName() + "\"/>");
             }
-            strBuffer.append("<!-- " + columnInfoVO.getRemarks() +" -->\n");
+            strBuffer.append("<!--" + columnInfoVO.getRemarks() +"-->\n");
         }
         strBuffer.append("\t</resultMap>\n\n");
 
@@ -262,7 +261,7 @@ public class MainService2 {
         //deleteById
         strBuffer.append("\t<!--deleteById-->\n");
         strBuffer.append("\t<delete id=\"deleteById\">\n");
-        strBuffer.append("\t\tdelete from " + this.tableObject.getTableName() + "where id = #{id}\n");
+        strBuffer.append("\t\tdelete from " + this.tableObject.getTableName() + " where id = #{id}\n");
         strBuffer.append("\t</delete>\n\n");
 
         //updateById
@@ -324,13 +323,13 @@ public class MainService2 {
         strBuffer.append("\t\twhere id=#{id}\n");
         strBuffer.append("\t</select>\n\n");
 
-        strBuffer.append("</sqlMap>");
+        strBuffer.append("</mapper>");
 
         PublicUtil.writeFile(this.filePath + this.tableObject.getJavaClassName() + "-sqlmap-mapping.xml",strBuffer.toString());
     }
 
     public static void main(String[] args){
-        MainService2 mainService = new MainService2("doc_table");
+        MainService2 mainService = new MainService2("sina_basic_data");
 
         PublicUtil.println("----------------------------------------");
         //获得表markdown结构
